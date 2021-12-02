@@ -7,12 +7,17 @@
     "start": "node dist/main/api",
     "build": "rimraf dist && tsc -p tsconfig-build.json",
     "lint": "eslint .",
-    "lint:fix": "npm run lint -- --fix"
+    "lint:fix": "npm run lint -- --fix",
+    "test": "jest --passWithNoTests --no-cache --runInBand",
+    "test:watch": "npm t -- --watch",
+    "test:staged": "npm t -- --findRelatedTests",
+    "test:coverage": "npm t -- --coverage"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/jest": "^27.0.3",
     "@types/module-alias": "^2.0.1",
     "@types/node": "^16.11.7",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
@@ -21,6 +26,8 @@
     "eslint-plugin-import": "^2.25.3",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.2.0",
+    "jest": "^27.4.3",
+    "ts-jest": "^27.0.7",
     "typescript": "4.4.2"
   },
   "engines": {
