@@ -1,5 +1,5 @@
 export class AccessToken {
-  constructor (
-    private readonly value: string
-  ) {}
+  static expirationInMs: number = 30 * 60 * 1000
+
+  constructor (private readonly value: string) {}
 }
