@@ -6,10 +6,12 @@ import { mock, MockProxy } from 'jest-mock-extended'
 describe('FacebookApi', () => {
   let clientId: string
   let clientSecret: string
+  let baseUrl: string
   let sut: FacebookApi
   let httpClient: MockProxy<HttpGetClient>
 
   beforeAll(() => {
+    baseUrl = 'https://graph.facebook.com'
     clientId = 'any_client_id'
     clientSecret = 'any_client_secret'
     httpClient = mock()
@@ -23,7 +25,7 @@ describe('FacebookApi', () => {
     await sut.loadUser({ token: 'any_client_token' })
 
     expect(httpClient.get).toHaveBeenCalledWith({
-      url: 'https://graph.facebook.com/oauth/access_token',
+      url: `${baseUrl}/oauth/access_token`,
       params: {
         client_id: clientId,
         client_secret: clientSecret,
