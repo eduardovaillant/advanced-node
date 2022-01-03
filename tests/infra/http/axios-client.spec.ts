@@ -31,10 +31,12 @@ describe('AxiosHttpClient', () => {
     expect(fakeAxios.get).toHaveBeenCalledTimes(1)
   })
 
-  it('should return data on success', async () => {
-    const result = await sut.get({ url, params })
+  it('should rethrow if get throws', async () => {
+    fakeAxios.get.mockRejectedValueOnce(new Error('http-error'))
 
-    expect(result).toEqual('any_data')
+    const promise = sut.get({ url, params })
+
+    await expect(promise).rejects.toThrow(new Error('http-error'))
   })
 })
 
