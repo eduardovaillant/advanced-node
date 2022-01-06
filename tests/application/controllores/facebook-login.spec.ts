@@ -1,6 +1,10 @@
+import { FacebookAuthentication } from '@/domain/features'
+import { mock } from 'jest-mock-extended'
+
 describe('FacebookLoginControler', () => {
   it('should return 400 if token is empty', async () => {
-    const sut = new FacebookLoginControler()
+    const facebookAuth = mock<FacebookAuthentication>()
+    const sut = new FacebookLoginControler(facebookAuth)
 
     const httpResponse = await sut.handle({ token: '' })
 
@@ -11,7 +15,8 @@ describe('FacebookLoginControler', () => {
   })
 
   it('should return 400 if token is null', async () => {
-    const sut = new FacebookLoginControler()
+    const facebookAuth = mock<FacebookAuthentication>()
+    const sut = new FacebookLoginControler(facebookAuth)
 
     const httpResponse = await sut.handle({ token: null })
 
@@ -22,7 +27,8 @@ describe('FacebookLoginControler', () => {
   })
 
   it('should return 400 if token is undefined', async () => {
-    const sut = new FacebookLoginControler()
+    const facebookAuth = mock<FacebookAuthentication>()
+    const sut = new FacebookLoginControler(facebookAuth)
 
     const httpResponse = await sut.handle({ token: undefined })
 
@@ -31,10 +37,26 @@ describe('FacebookLoginControler', () => {
       data: new Error('The token field is required!')
     })
   })
+
+  it('should call FacebookAuthentication with correct params', async () => {
+    const facebookAuth = mock<FacebookAuthentication>()
+    const sut = new FacebookLoginControler(facebookAuth)
+
+    await sut.handle({ token: 'any_token' })
+
+    expect(facebookAuth.perform).toHaveBeenCalledWith({ token: 'any_token' })
+    expect(facebookAuth.perform).toHaveBeenCalledTimes(1)
+  })
 })
 
 class FacebookLoginControler {
+  constructor (
+    private readonly facebookAuthentication: FacebookAuthentication
+  ) {}
+
   async handle (httpRequest: any): Promise<HttpResponse> {
+    await this.facebookAuthentication.perform({ token: httpRequest.token })
+
     return {
       statusCode: 400,
       data: new Error('The token field is required!')
