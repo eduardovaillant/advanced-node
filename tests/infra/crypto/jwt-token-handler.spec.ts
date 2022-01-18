@@ -7,9 +7,11 @@ jest.mock('jsonwebtoken')
 describe('JwtTokenHandler', () => {
   let sut: JwtTokenHandler
   let fakeJwt: jest.Mocked<typeof jwt>
+  let key: string
   let secret: string
 
   beforeAll(() => {
+    key = 'any_key'
     secret = 'any_secret'
     fakeJwt = jwt as jest.Mocked<typeof jwt>
     fakeJwt.sign.mockImplementation(() => 'any_token')
@@ -20,12 +22,10 @@ describe('JwtTokenHandler', () => {
   })
 
   describe('generateToken()', () => {
-    let key: string
     let token: string
     let expirationInMs: number
 
     beforeAll(() => {
-      key = 'any_key'
       token = 'any_token'
       expirationInMs = 1000
       fakeJwt.sign.mockImplementation(() => token)
@@ -58,6 +58,7 @@ describe('JwtTokenHandler', () => {
 
     beforeAll(() => {
       token = 'any_token'
+      fakeJwt.verify.mockImplementation(() => ({ key }))
     })
 
     it('should call sign with correct params', async () => {
@@ -65,6 +66,12 @@ describe('JwtTokenHandler', () => {
 
       expect(fakeJwt.verify).toHaveBeenCalledWith(token, secret)
       expect(fakeJwt.verify).toHaveBeenCalledTimes(1)
+    })
+
+    it('should return the key used to sign', async () => {
+      const signKey = await sut.validateToken({ token })
+
+      expect(signKey).toBe(key)
     })
   })
 })
