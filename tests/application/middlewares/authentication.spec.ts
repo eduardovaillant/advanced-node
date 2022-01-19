@@ -2,9 +2,13 @@ import { UnauthorizedError } from '@/application/errors'
 import { HttpResponse, unauthorized } from '@/application/helpers'
 
 describe('AuthenticationMiddleware', () => {
-  it('should return 401 if authorization is empty', async () => {
-    const sut = new AuthenticationMiddleware()
+  let sut: AuthenticationMiddleware
 
+  beforeEach(() => {
+    sut = new AuthenticationMiddleware()
+  })
+
+  it('should return 401 if authorization is empty', async () => {
     const httpResponse = await sut.handle({ authorization: '' })
 
     expect(httpResponse).toEqual({
@@ -14,8 +18,6 @@ describe('AuthenticationMiddleware', () => {
   })
 
   it('should return 401 if authorization is null', async () => {
-    const sut = new AuthenticationMiddleware()
-
     const httpResponse = await sut.handle({ authorization: null as any })
 
     expect(httpResponse).toEqual({
@@ -25,8 +27,6 @@ describe('AuthenticationMiddleware', () => {
   })
 
   it('should return 401 if authorization is undefined', async () => {
-    const sut = new AuthenticationMiddleware()
-
     const httpResponse = await sut.handle({ authorization: undefined as any })
 
     expect(httpResponse).toEqual({
