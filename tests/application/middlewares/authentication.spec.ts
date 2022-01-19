@@ -1,11 +1,20 @@
 import { UnauthorizedError } from '@/application/errors'
 import { HttpResponse, unauthorized } from '@/application/helpers'
+import { RequiredStringValidator } from '@/application/validation'
+import { Authorize } from '@/domain/use-cases'
 
 describe('AuthenticationMiddleware', () => {
   let sut: AuthenticationMiddleware
+  let authorization: string
+  let authorize: jest.Mock
+
+  beforeAll(() => {
+    authorization = 'any_authorization_token'
+    authorize = jest.fn()
+  })
 
   beforeEach(() => {
-    sut = new AuthenticationMiddleware()
+    sut = new AuthenticationMiddleware(authorize)
   })
 
   it('should return 401 if authorization is empty', async () => {
@@ -34,12 +43,25 @@ describe('AuthenticationMiddleware', () => {
       data: new UnauthorizedError()
     })
   })
+
+  it('should call authorize with correct input', async () => {
+    await sut.handle({ authorization })
+
+    expect(authorize).toHaveBeenCalledWith({ token: authorization })
+    expect(authorize).toHaveBeenCalledTimes(1)
+  })
 })
 
 type HttpRequest = { authorization: string }
 
 export class AuthenticationMiddleware {
-  async handle (httpRequest: HttpRequest): Promise<HttpResponse<Error>> {
-    return unauthorized()
+  constructor (
+    private readonly authorize: Authorize
+  ) {}
+
+  async handle ({ authorization }: HttpRequest): Promise<HttpResponse<Error> | undefined> {
+    const error = new RequiredStringValidator(authorization, 'authorization').validate()
+    if (error !== undefined) return unauthorized()
+    await this.authorize({ token: authorization })
   }
 }
