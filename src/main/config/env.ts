@@ -1,8 +1,9 @@
 export const env = {
   facebookApi: {
-    clientId: process.env.FB_CLIENT_ID ?? '3119851681669931',
-    clientSecret: process.env.FB_CLIENT_SECRET ?? '65a6fc364f7b2a7fc647ab64bb1a5e0e'
+    clientId: process.env.FB_CLIENT_ID ?? '',
+    clientSecret: process.env.FB_CLIENT_SECRET ?? '',
+    accessToken: process.env.FB_ACCESS_TOKEN ?? ''
   },
   port: process.env.PORT ?? '8080',
-  jwtSecret: process.env.JWT_SECRET ?? 'kasmjn872dsad13278adsa'
+  jwtSecret: process.env.JWT_SECRET ?? 'jk43h5jk43h5k34'
 }
