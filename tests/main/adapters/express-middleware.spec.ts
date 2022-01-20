@@ -17,8 +17,13 @@ describe('ExpressMiddleware', () => {
     next = getMockRes().next
     middleware = mock()
     middleware.handle.mockResolvedValue({
-      statusCode: 500,
-      data: { error: 'any_error' }
+      statusCode: 200,
+      data: {
+        emptyProp: '',
+        nullProp: null,
+        undefinedProp: undefined,
+        prop: 'any_value'
+      }
     })
   })
 
@@ -43,6 +48,11 @@ describe('ExpressMiddleware', () => {
   })
 
   it('should responde with correct error and statusCode', async () => {
+    middleware.handle.mockResolvedValueOnce({
+      statusCode: 500,
+      data: { error: 'any_error' }
+    })
+
     await sut(req, res, next)
 
     expect(res.status).toHaveBeenCalledWith(500)
@@ -50,13 +60,26 @@ describe('ExpressMiddleware', () => {
     expect(res.json).toHaveBeenCalledWith({ error: 'any_error' })
     expect(res.json).toHaveBeenCalledTimes(1)
   })
+
+  it('should add valid data to req.locals', async () => {
+    await sut(req, res, next)
+
+    expect(req.locals).toEqual({ prop: 'any_value' })
+    expect(next).toHaveBeenCalledTimes(1)
+  })
 })
 
 type Adapter = (middleware: Middleware) => RequestHandler
 
 const adaptExpressMiddleware: Adapter = middleware => async (req, res, next) => {
   const { statusCode, data } = await middleware.handle({ ...req.headers })
-  res.status(statusCode).json(data)
+  if (statusCode === 200) {
+    const entries = Object.entries(data).filter(entry => entry[1])
+    req.locals = { ...req.locals, ...Object.fromEntries(entries) }
+    next()
+  } else {
+    res.status(statusCode).json(data)
+  }
 }
 
 export interface Middleware {
