@@ -68,7 +68,7 @@ describe('UserProfile', () => {
   })
 
   it('should create with empty initials when name and pictureUrl are not provided', () => {
-    sut.setPictureUrl({ })
+    sut.setPictureUrl({ name: '' })
 
     expect(sut).toEqual(
       {
