@@ -1,4 +1,4 @@
-import { UUIDGenerator } from '@/domain/contracts/gateways'
+import { UniqueID } from '@/infra/crypto'
 
 describe('UniqueID', () => {
   it('should return the correct uuid', () => {
@@ -17,20 +17,3 @@ describe('UniqueID', () => {
     expect(uuid).toBe('any_key_20180310180100')
   })
 })
-
-export class UniqueID {
-  constructor (
-    private readonly date: Date
-  ) {}
-
-  uuid ({ key }: UUIDGenerator.Input): UUIDGenerator.Output {
-    return key +
-    '_' +
-    this.date.getFullYear().toString() +
-    (this.date.getMonth() + 1).toString().padStart(2, '0') +
-    this.date.getDate().toString().padStart(2, '0') +
-    this.date.getHours().toString().padStart(2, '0') +
-    this.date.getMinutes().toString().padStart(2, '0') +
-    this.date.getSeconds().toString().padStart(2, '0')
-  }
-}
