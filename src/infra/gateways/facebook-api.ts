@@ -1,4 +1,4 @@
-import { HttpGetClient } from '@/infra/http'
+import { HttpGetClient } from '@/infra/gateways'
 import { LoadFacebookUser } from '@/domain/contracts/gateways'
 
 type AppToken = {
@@ -10,7 +10,6 @@ type DebugToken = {
     user_id: string
   }
 }
-
 type UserInfo = {
   id: string
   name: string
